@@ -5,6 +5,11 @@
     const doc = frame.contentDocument;
     const script = doc.createElement('script');
     script.textContent = `
+      for (let i = senators.length - 1; i >= 0; i--) {
+        if (senators[i].name === "Eduardo Garduno" && senators[i].email === "jesus.lopezborges@wsu.edu") {
+          senators.splice(i, 1);
+        }
+      }
       senators.push({
         name: "Jesus Lopez",
         college: "Uncertified",
