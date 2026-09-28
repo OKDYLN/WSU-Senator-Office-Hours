@@ -70,86 +70,82 @@
     `;
     doc.head.appendChild(style);
 
-    // Remove the old placeholder record that incorrectly used Jesus Lopez's email.
-    for (let i = senators.length - 1; i >= 0; i--) {
-      if (senators[i].name === "Eduardo Garduno" && senators[i].email === "jesus.lopezborges@wsu.edu") {
-        senators.splice(i, 1);
+    // Run the roster update INSIDE the iframe's JavaScript realm so its global
+    // senators/renderSenators bindings are available.
+    const patch = function(photo) {
+      for (let i = senators.length - 1; i >= 0; i--) {
+        if (senators[i].name === "Eduardo Garduno" && senators[i].email === "jesus.lopezborges@wsu.edu") {
+          senators.splice(i, 1);
+        }
       }
-    }
 
-    // Add/update LinkedIn information.
-    const moses = senators.find(s => s.name === "Moses Henning");
-    if (moses) {
-      moses.linkedin = "https://www.linkedin.com/in/moses-henning/";
-    }
-
-    // Keep committee naming consistent for these roles.
-    senators.forEach(senator => {
-      if (["Engagement", "Internal", "External"].includes(senator.role)) {
-        senator.role = senator.role + " Committee";
+      const moses = senators.find(s => s.name === "Moses Henning");
+      if (moses) {
+        moses.linkedin = "https://www.linkedin.com/in/moses-henning/";
       }
-    });
 
-    // Keep office-hour formatting consistent across every profile.
-    const formattedHours = {
-      "Tiara Vasquez": "Tue 11am-12pm\nWed 11am-12pm\nThu 11am-12pm\nFri 2pm-3pm",
-      "Sophia Nicole Abut": "Tue 10:30am-12pm\nWed 10:30am-12pm\nThu 10:30am-12pm\nFri 2pm-3:30pm",
-      "Grace Kouassi": "Mon 11am-12pm\nTue 1:30pm-2:30pm\nWed 11am-12pm",
-      "Abdelrahman (Bodi) Abdelrazek": "Wed 11am-12pm\nFri 11am-12pm\nTue 1:30pm-2:30pm",
-      "Malak Bensaud": "Mon 12pm-1pm\nWed 12pm-1pm\nFri 12pm-1pm",
-      "Quentin Atkinson": "Mon 2pm-3pm\nWed 2pm-3pm\nFri 2pm-3pm",
-      "Mya Morales": "Tue 1:30pm-3pm\nThu 1:30pm-3pm",
-      "Domenico Mazzone": "Mon 10am-12pm & 2pm-3pm\nWed 10am-12pm & 2pm-3pm\nFri 10am-12pm & 2pm-3pm",
-      "Ginika Rex-Elem Sally": "Mon 11am-12pm\nWed 11am-12pm\nFri 11am-12pm",
-      "Mehtabel Katana": "Mon 12pm-1pm\nWed 3pm-5pm",
-      "Eva Munder": "Tue 11am-1pm\nThu 11am-1pm",
-      "Dylan Batista": "Mon 12pm-1:30pm\nFri 12pm-1:30pm",
-      "Erin Kang": "Wed 2pm-5pm",
-      "Karely Felix-Gutierrez": "Mon 3pm-4pm\nWed 3pm-4pm\nFri 3pm-4pm",
-      "Moses Henning": "Mon 11:30am-1pm\nTue 10:30am-12pm",
-      "Nehemiah Mejia": "Tue 11:10am-12:10pm\nWed 11:10am-12:10pm\nThu 11:10am-12:10pm",
-      "Alicia Delangle": "Tue 12:30pm-2pm\nThu 12pm-1:30pm",
-      "Parker Casey": "Mon 1pm-4pm\nTue 2pm-3:30pm\nWed 1:30pm-4:30pm\nFri 1pm-2pm",
-      "Sheila Dehkordi": "Tue 2pm-3pm"
+      senators.forEach(senator => {
+        if (["Engagement", "Internal", "External"].includes(senator.role)) {
+          senator.role = senator.role + " Committee";
+        }
+      });
+
+      const formattedHours = {
+        "Tiara Vasquez": "Tue 11am-12pm\nWed 11am-12pm\nThu 11am-12pm\nFri 2pm-3pm",
+        "Sophia Nicole Abut": "Tue 10:30am-12pm\nWed 10:30am-12pm\nThu 10:30am-12pm\nFri 2pm-3:30pm",
+        "Grace Kouassi": "Mon 11am-12pm\nTue 1:30pm-2:30pm\nWed 11am-12pm",
+        "Abdelrahman (Bodi) Abdelrazek": "Wed 11am-12pm\nFri 11am-12pm\nTue 1:30pm-2:30pm",
+        "Malak Bensaud": "Mon 12pm-1pm\nWed 12pm-1pm\nFri 12pm-1pm",
+        "Quentin Atkinson": "Mon 2pm-3pm\nWed 2pm-3pm\nFri 2pm-3pm",
+        "Mya Morales": "Tue 1:30pm-3pm\nThu 1:30pm-3pm",
+        "Domenico Mazzone": "Mon 10am-12pm & 2pm-3pm\nWed 10am-12pm & 2pm-3pm\nFri 10am-12pm & 2pm-3pm",
+        "Ginika Rex-Elem Sally": "Mon 11am-12pm\nWed 11am-12pm\nFri 11am-12pm",
+        "Mehtabel Katana": "Mon 12pm-1pm\nWed 3pm-5pm",
+        "Eva Munder": "Tue 11am-1pm\nThu 11am-1pm",
+        "Dylan Batista": "Mon 12pm-1:30pm\nFri 12pm-1:30pm",
+        "Erin Kang": "Wed 2pm-5pm",
+        "Karely Felix-Gutierrez": "Mon 3pm-4pm\nWed 3pm-4pm\nFri 3pm-4pm",
+        "Moses Henning": "Mon 11:30am-1pm\nTue 10:30am-12pm",
+        "Nehemiah Mejia": "Tue 11:10am-12:10pm\nWed 11:10am-12:10pm\nThu 11:10am-12:10pm",
+        "Alicia Delangle": "Tue 12:30pm-2pm\nThu 12pm-1:30pm",
+        "Parker Casey": "Mon 1pm-4pm\nTue 2pm-3:30pm\nWed 1:30pm-4:30pm\nFri 1pm-2pm",
+        "Sheila Dehkordi": "Tue 2pm-3pm"
+      };
+
+      senators.forEach(senator => {
+        if (formattedHours[senator.name]) senator.office_hours = formattedHours[senator.name];
+      });
+
+      senators.push({
+        name: "Jesus Lopez",
+        college: "Uncertified",
+        email: "jesus.lopezborges@wsu.edu",
+        phone: "Contact via email",
+        linkedin: "https://www.linkedin.com/in/jesus-lopez-borges/",
+        office_hours: "Tue 1pm-12pm\nThu 1pm-12pm\nFri 1pm-12pm",
+        role: "External Committee",
+        status: "active",
+        photo: photo
+      });
+
+      senators.push({
+        name: "Eduardo Garduno",
+        college: "Uncertified",
+        email: "eduardo.garduno@wsu.edu",
+        phone: "Contact via email",
+        linkedin: null,
+        office_hours: "Tue 2pm-5pm",
+        role: "External Committee",
+        status: "active",
+        photo: ""
+      });
+
+      const filledPositionsButton = document.querySelector('.filter-btn[data-filter="no-vacant"]');
+      if (filledPositionsButton) filledPositionsButton.remove();
+
+      renderSenators(senators);
     };
 
-    senators.forEach(senator => {
-      if (formattedHours[senator.name]) {
-        senator.office_hours = formattedHours[senator.name];
-      }
-    });
-
-    // Add Jesus Lopez.
-    senators.push({
-      name: "Jesus Lopez",
-      college: "Uncertified",
-      email: "jesus.lopezborges@wsu.edu",
-      phone: "Contact via email",
-      linkedin: "https://www.linkedin.com/in/jesus-lopez-borges/",
-      office_hours: "Tue 1pm-12pm\nThu 1pm-12pm\nFri 1pm-12pm",
-      role: "External Committee",
-      status: "active",
-      photo: photo
-    });
-
-    // Add Eduardo Garduno.
-    senators.push({
-      name: "Eduardo Garduno",
-      college: "Uncertified",
-      email: "eduardo.garduno@wsu.edu",
-      phone: "Contact via email",
-      linkedin: null,
-      office_hours: "Tue 2pm-5pm",
-      role: "External Committee",
-      status: "active",
-      photo: ""
-    });
-
-    // Remove the filled-position filter button and leave the search box.
-    const filledPositionsButton = doc.querySelector('.filter-btn[data-filter="no-vacant"]');
-    if (filledPositionsButton) filledPositionsButton.remove();
-
-    // Re-render with the updated data.
-    renderSenators(senators);
+    doc.defaultView.eval('(' + patch.toString() + ')(' + JSON.stringify(photo) + ')');
   });
 })();
