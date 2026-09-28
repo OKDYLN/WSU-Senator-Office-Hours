@@ -146,6 +146,9 @@
       renderSenators(senators);
     };
 
-    doc.defaultView.eval('(' + patch.toString() + ')(' + JSON.stringify(photo) + ')');
+    const patchScript = doc.createElement('script');
+    patchScript.textContent = '(' + patch.toString() + ')(' + JSON.stringify(photo) + ');';
+    doc.body.appendChild(patchScript);
+    patchScript.remove();
   });
 })();
